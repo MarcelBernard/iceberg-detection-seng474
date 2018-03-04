@@ -27,7 +27,7 @@ class Model:
         # Sequential model
         model = Sequential()
         # Conv2D input layer
-        model.add(Convolution2D(16, (3, 3), activation = 'relu', input_shape = (75, 75, 3)))
+        model.add(Convolution2D(16, (3, 3), strides = (1,1), activation = 'relu', input_shape = (75, 75, 3)))
         model.add(MaxPooling2D(pool_size=(2,2)))
         model.add(Dropout(0.2))
         # Conv2D layer 2
@@ -41,8 +41,8 @@ class Model:
         # Flatten data fro dense layers
         model.add(Flatten())
         # Dense layer
-        model.add(Dense(256, activation='relu'))
-        model.add(Dropout(0.3))
+        model.add(Dense(512, activation='relu'))
+        model.add(Dropout(0.4))
         # Dense layer 2/sigmoid boi
         model.add(Dense(4, activation='sigmoid'))
         # Compile model
