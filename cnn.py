@@ -29,22 +29,22 @@ class Model:
         # Conv2D input layer
         model.add(Convolution2D(16, (3, 3), activation = 'relu', input_shape = (75, 75, 3)))
         model.add(MaxPooling2D(pool_size=(2,2)))
-        model.add(Dropout(0.25))
+        model.add(Dropout(0.2))
         # Conv2D layer 2
         model.add(Convolution2D(64, (3, 3), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2,2)))
-        model.add(Dropout(0.25))
+        model.add(Dropout(0.2))
         # Conv2D layer 3
         model.add(Convolution2D(32, (3, 3), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2,2)))
-        model.add(Dropout(0.25))
+        model.add(Dropout(0.2))
         # Flatten data fro dense layers
         model.add(Flatten())
         # Dense layer
         model.add(Dense(256, activation='relu'))
-        model.add(Dropout(0.25))
+        model.add(Dropout(0.3))
         # Dense layer 2/sigmoid boi
-        model.add(Dense(10, activation='sigmoid'))
+        model.add(Dense(4, activation='sigmoid'))
         # Compile model
         model.compile(loss='binary_crossentropy',
                       optimizer='adam',
@@ -60,7 +60,7 @@ class Model:
         # Fit model
         model.fit(X_train, y_train,
                 batch_size = 24,
-                epochs = 5,
+                epochs = 10,
                 verbose = 1
                 # verbose = 1,
                 # validation_data = (X_valid, y_valid),
@@ -76,8 +76,8 @@ class Model:
         # Split the training data
         X_train, X_valid, y_train, y_valid = train_test_split(X, y, random_state=1, train_size=0.75)
         # preprocess labels for y_train and y_valid
-        y_train = np_utils.to_categorical(y_train, 10)
-        y_valid = np_utils.to_categorical(y_valid, 10)
+        y_train = np_utils.to_categorical(y_train, 4)
+        y_valid = np_utils.to_categorical(y_valid, 4)
         return X_train, X_valid, y_train, y_valid
 
     if __name__ == '__main__':
