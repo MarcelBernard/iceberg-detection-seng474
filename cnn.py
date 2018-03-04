@@ -81,19 +81,7 @@ class Model:
         return X_train, X_valid, y_train, y_valid
 
     if __name__ == '__main__':
-        # X, y, train = get_input_data(train_file_path='train.json')
         X, y = get_input_data(train_file_path='train.json')
-        # optimizer = tf.train.GradientDescentOptimizer(0.01)
-        # train = optimizer.minimize(loss)
-        # target_train=train['is_iceberg']
-        # X_train, X_valid, y_train, y_valid = train_test_split(X, y, random_state=1, train_size=0.75)
         X_train, X_valid, y_train, y_valid = process_data(X, y)
-        '''
-        X_train_cv = X_train.astype('float32')
-        X_train_cv /= 255
-        '''
-        # y_train = np_utils.to_categorical(y_train, 10)
-        # print("Shape of training data: {}".format(X_train.shape))
-        # print("Shape of training data: {}".format(Y_train.shape))
         model = get_model()
         fit_model(model, X_train, y_train)
