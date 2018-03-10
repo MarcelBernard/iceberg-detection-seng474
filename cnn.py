@@ -4,7 +4,7 @@ import numpy as np
 from data_preprocessing import get_input_data
 
 from sklearn.model_selection import train_test_split, StratifiedKFold
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 from keras import optimizers
 from keras.models import Sequential
 from keras.layers import Convolution2D, MaxPooling2D, GlobalMaxPooling2D, Dense, Dropout, Input, Flatten, Activation
@@ -77,9 +77,20 @@ if __name__ == '__main__':
         model.fit(X_train, y_train, epochs=10, verbose=1)
         y_predictions = model.predict(X_test)
 
+        # Convert predictions to binary
+        threshold = 0.5
+        threshold_predictions = []
+        for prediction in y_predictions:
+            if prediction > threshold:
+                threshold_predictions.append(1)
+            else:
+                threshold_predictions.append(0)
+
         # Evaluate metrics
-        accuracies.append(accuracy_score(y_true=y_test, y_pred=y_predictions))
-        losses.append(model.evaluate(X_test, y_test))
+        accuracies.append(accuracy_score(y_true=y_test, y_pred=threshold_predictions))
+        losses.append(model.evaluate(X_test, y_test)[0])
+        precision_scores.append(precision_score(y_true=y_test, y_pred=threshold_predictions))
+        recall_scores.append(recall_score(y_true=y_test, y_pred=threshold_predictions))
 
     print('Average accuracy: {}'.format(np.mean(accuracies)))
     print('Average log loss: {}'.format(np.mean(losses)))
