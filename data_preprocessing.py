@@ -27,12 +27,8 @@ def get_input_data(train_file_path='train.json'):
     band_1 = np.array([np.array(band).astype(np.float32).reshape(75, 75) for band in band_1])
     band_2 = np.array([np.array(band).astype(np.float32).reshape(75, 75) for band in band_2])
 
-    # Use the average of both bands for a third channel, since keras expects a three channel image
-    band_avg = (band_1 + band_2) / 2
-
     # Combine all three channels into an array of 1604 tensors (number of training images) with dimension 75 x 75 x 3
-    X_train = np.concatenate([band_1[:, :, :, np.newaxis], band_2[:, :, :, np.newaxis],
-                             band_avg[:, :, :, np.newaxis]], axis=-1)
+    X_train = np.concatenate([band_1[:, :, :, np.newaxis], band_2[:, :, :, np.newaxis]], axis=-1)
 
     # True labels of data, either iceberg or not iceberg
     y_train = np.array([instance['is_iceberg'] for instance in train_data])

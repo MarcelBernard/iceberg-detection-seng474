@@ -1,136 +1,97 @@
-'''
-shape input layers properly (75 x 75 x 3)
-try different numbers of layers and parameters to find out what is good
-dense layers, then sigmoid function
-'''
 import json
 import os
 import numpy as np
-from data_preprocessing import *
+from data_preprocessing import get_input_data
 
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+from keras import optimizers
 from keras.models import Sequential
 from keras.layers import Convolution2D, MaxPooling2D, GlobalMaxPooling2D, Dense, Dropout, Input, Flatten, Activation, BatchNormalization
 from keras.layers.merge import Concatenate
 from keras.models import Model
 from keras.utils import np_utils
 
-'''
-    Class containing methods for generating and fitting a model for the iceberg dataset.
-'''
-class Model:
-    '''
-        Generates and compiles a sequential model with 3 convolutional 2D layers, 
-        1 dense layer and a sigmoid function.
-    '''
-    def get_model():
-        # Sequential model
-        p_activation = "elu"
-        bn_model = 0
-        input_1 = Input(shape=(75, 75, 3), name="X_1")
-        input_2 = Input(shape=[1], name="angle")
-        #model = Sequential()
-        # Conv2D input layer
-        '''
-        model.add(Convolution2D(16, (3, 3), strides = (1,1), activation = 'relu', input_shape = (75, 75, 3)))
-        model.add(MaxPooling2D(pool_size=(2,2)))
-        model.add(Dropout(0.2))
-        # Conv2D layer 2
-        model.add(Convolution2D(64, (3, 3), activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2,2)))
-        model.add(Dropout(0.2))
-        # Conv2D layer 3
-        model.add(Convolution2D(32, (3, 3), activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2,2)))
-        model.add(Dropout(0.2))
-        # Flatten data fro dense layers
-        model.add(Flatten())
-        # Dense layer
-        model.add(Dense(512, activation='relu'))
-        model.add(Dropout(0.4))
-        # Dense layer 2/sigmoid boi
-        model.add(Dense(1, activation='sigmoid'))
-        '''
-        img_1 = Convolution2D(16, kernel_size = (3,3), activation=p_activation) ((BatchNormalization(momentum=bn_model))(input_1))
-        img_1 = Convolution2D(16, kernel_size = (3,3), activation=p_activation) (img_1)
-        img_1 = MaxPooling2D((2,2)) (img_1)
-        img_1 = Dropout(0.2)(img_1)
-        img_1 = Convolution2D(32, kernel_size = (3,3), activation=p_activation) (img_1)
-        img_1 = Convolution2D(32, kernel_size = (3,3), activation=p_activation) (img_1)
-        img_1 = MaxPooling2D((2,2)) (img_1)
-        img_1 = Dropout(0.2)(img_1)
-        img_1 = Convolution2D(64, kernel_size = (3,3), activation=p_activation) (img_1)
-        img_1 = Convolution2D(64, kernel_size = (3,3), activation=p_activation) (img_1)
-        img_1 = MaxPooling2D((2,2)) (img_1)
-        img_1 = Dropout(0.2)(img_1)
-        img_1 = Convolution2D(128, kernel_size = (3,3), activation=p_activation) (img_1)
-        img_1 = MaxPooling2D((2,2)) (img_1)
-        img_1 = Dropout(0.2)(img_1)
-        img_1 = GlobalMaxPooling2D() (img_1)
-        
-        
-        img_2 = Convolution2D(128, kernel_size = (3,3), activation=p_activation) ((BatchNormalization(momentum=bn_model))(input_1))
-        img_2 = MaxPooling2D((2,2)) (img_2)
-        img_2 = Dropout(0.2)(img_2)
-        img_2 = GlobalMaxPooling2D() (img_2)
-        
-        img_concat =  (Concatenate()([img_1, img_2, BatchNormalization(momentum=bn_model)(input_2)]))
-        
-        dense_ayer = Dropout(0.5) (BatchNormalization(momentum=bn_model) ( Dense(256, activation=p_activation)(img_concat) ))
-        dense_ayer = Dropout(0.5) (BatchNormalization(momentum=bn_model) ( Dense(64, activation=p_activation)(dense_ayer) ))
-        output = Dense(1, activation="sigmoid")(dense_ayer)
-        
-        model = Model([input_1,input_2],  output)
-        # optimizer = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
-        model.compile(loss="binary_crossentropy", optimizer='adam', metrics=["accuracy"])
-        return model
+def get_model():
+    """ Generates and compiles a sequential model with 4 convolutional 2D layers,
+    2 dense layer and a sigmoid function. Initial implementation inspired by
+    https://www.kaggle.com/cbryant/keras-cnn-statoil-iceberg-lb-0-1995-now-0-1516"""
+    # Sequential model
+    model = Sequential()
+    # Conv2D input layer
+    model.add(Convolution2D(64, (3, 3), strides = (1,1), activation = 'relu', input_shape = (75, 75, 2)))
+    model.add(MaxPooling2D(pool_size=(3,3), strides=(2, 2)))
+    model.add(Dropout(0.2))
+    # Conv2D layer 2
+    model.add(Convolution2D(128, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2,2), strides=(2, 2)))
+    model.add(Dropout(0.2))
+    # Conv2D layer 3
+    model.add(Convolution2D(128, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2,2), strides=(2, 2)))
+    model.add(Dropout(0.2))
+    # Conv2D layer 4
+    model.add(Convolution2D(64, kernel_size=(3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    model.add(Dropout(0.2))
+    # Flatten data fro dense layers
+    model.add(Flatten())
+    # Dense layer 1
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.4))
+    # Dense layer 2
+    model.add(Dense(256, activation='relu'))
+    model.add(Dropout(0.2))
+    # Dense layer 3/sigmoid boi
+    model.add(Dense(1, activation='sigmoid'))
+    # Compile model
 
-        '''
-        # Compile model
-        model.compile(loss='binary_crossentropy',
-                      optimizer='adam',
-                      metrics=['accuracy'])
-        model.summary()
-        return model
-        '''
-
-    '''
-        Fits the model generated by get_model() to the processed data.
-        Takes the model, processed x and processed y training data as arguments.
-    '''
-    def fit_model(model, X_train, y_train, X_angle_train):
-        '''
-        # Fit model
-        model.fit(X_train, y_train,
-                batch_size = 24,
-                epochs = 10,
-                verbose = 1
-                # verbose = 1,
-                # validation_data = (X_valid, y_valid),
-                # callbacks = callbacks
-                )
-        '''
-        
+    optimizer = optimizers.Adam(lr=0.001, decay=0.0)
+    model.compile(loss='binary_crossentropy',
+                  optimizer=optimizer,
+                  metrics=['accuracy'])
+    model.summary()
+    return model
 
 
-    '''
-        Processes data to use in the model.
-        Takes the preprocessed X and y training data as arguments and returns X_train, X_valid, 
-        y_train, y_valid to be used with the model.
-    '''
-    def process_data(X, y):
-        # Split the training data
-        X_train, X_valid, y_train, y_valid = train_test_split(X, y, random_state=1, train_size=0.75)
-        # preprocess labels for y_train and y_valid
-        # y_train = np_utils.to_categorical(y_train, 1)
-        # y_valid = np_utils.to_categorical(y_valid, 1)
-        return X_train, X_valid, y_train, y_valid
+if __name__ == '__main__':
+    X, y = get_input_data(train_file_path='train.json')
+    model = get_model()
 
-    if __name__ == '__main__':
-        X, y = get_input_data(train_file_path='train.json')
-        X_train, X_valid, y_train, y_valid = process_data(X, y)
-        X_train.inc_angle = X_train.inc_angle.replace('na', 0)
-        X_train.inc_angle = X_train.inc_angle.astype(float).fillna(0.0)
-        X_angle_train = np.array(X_train.inc_angle)
-        model = get_model()
-        fit_model(model, X_train, y_train, X_angle_train)
+    accuracies = []
+    losses = []
+    precision_scores = []
+    recall_scores = []
+
+    # Perform 10-fold cross validation
+    kfolds = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
+    for train_index, test_index in kfolds.split(X, y):
+        X_train = X[train_index]
+        X_test = X[test_index]
+
+        y_train = y[train_index]
+        y_test = y[test_index]
+
+        # Train and test model
+        model.fit(X_train, y_train, epochs=10, verbose=1)
+        y_predictions = model.predict(X_test)
+
+        # Convert predictions to binary
+        threshold = 0.5
+        threshold_predictions = []
+        for prediction in y_predictions:
+            if prediction > threshold:
+                threshold_predictions.append(1)
+            else:
+                threshold_predictions.append(0)
+
+        # Evaluate metrics
+        accuracies.append(accuracy_score(y_true=y_test, y_pred=threshold_predictions))
+        losses.append(model.evaluate(X_test, y_test)[0])
+        precision_scores.append(precision_score(y_true=y_test, y_pred=threshold_predictions))
+        recall_scores.append(recall_score(y_true=y_test, y_pred=threshold_predictions))
+
+    print('Average accuracy: {}'.format(np.mean(accuracies)))
+    print('Average log loss: {}'.format(np.mean(losses)))
+    print('Average precision: {}'.format(np.mean(precision_scores)))
+    print('Average recall: {}'.format(np.mean(recall_scores)))
