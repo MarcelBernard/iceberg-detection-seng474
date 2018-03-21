@@ -1,7 +1,7 @@
 import json
 import os
 import numpy as np
-from data_preprocessing import get_input_data
+from data_preprocessing import get_input_data, get_rotated_images
 
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.metrics import accuracy_score, precision_score, recall_score
@@ -56,6 +56,12 @@ def get_model():
 
 if __name__ == '__main__':
     X, y = get_input_data(train_file_path='train.json')
+
+    # Incorporate rotated images into training data (note that this significantly increases training time)
+    X_rotated, y_rotated = get_rotated_images(X, y)
+    X = np.concatenate([X, X_rotated])
+    y = np.concatenate([y, y_rotated])
+
     model = get_model()
 
     accuracies = []
