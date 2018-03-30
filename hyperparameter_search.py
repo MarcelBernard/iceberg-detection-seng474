@@ -20,14 +20,14 @@ hyperparams = [learning_rates, epoch_counts, batch_sizes, dropout]
 permutations = list(itertools.product(*hyperparams))
 
 marcel = permutations[:45]
-mahfuza = hyperparams[45:90]
-nigel = hyperparams[90:135]
-lambert = hyperparams[135:]
+mahfuza = permutations[45:90]
+nigel = permutations[90:135]
+lambert = permutations[135:]
 
 X, y = get_input_data(train_file_path='train.json')
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-for params in YOUR_NAME_GOES_HERE:
+for params in lambert:
     model = get_model(learning_rate=params[0], dropout=params[3])
 
     accuracies = []
