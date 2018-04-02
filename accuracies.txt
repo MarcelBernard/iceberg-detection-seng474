@@ -1,0 +1,5 @@
+Scores after adding additional data through rotations of original images:
+Average accuracy: 0.9269367188402453
+Average log loss: 0.1716728599220159
+Average precision: 0.9086502400785494
+Average recall: 0.9412499174935645
