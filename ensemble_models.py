@@ -66,47 +66,46 @@ def get_model_A(model_input, learning_rate, dropout):
 
 
 def get_model_B(model_input, learning_rate, dropout):
-    model = (Convolution2D(64, (3, 3), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model_input)
-    model = (MaxPooling2D(pool_size=(3, 3), strides=(2, 2)))(model)
+    model = (Convolution2D(64, (5, 5), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model_input)
+    model = (Convolution2D(64, (5, 5), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
+    model = (Convolution2D(64, (5, 5), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
+    model = (MaxPooling2D(pool_size=(2,2), strides=(2, 2)))(model)
+    model = (Dropout(dropout))(model)
+    model = (Convolution2D(64, (5, 5), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
+    model = (MaxPooling2D(pool_size=(2,2), strides=(2, 2)))(model)
+    model = (Dropout(dropout))(model)
+    model = (Convolution2D(64, (5, 5), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
+    model = (MaxPooling2D(pool_size=(2, 2), strides=(8, 8)))(model)
     model = (Dropout(dropout))(model)
     model = (Flatten())(model)
-    # Dense layer 1
-    model = (Dense(512, activation='relu'))(model)
-    model = (Dropout(dropout))(model)
-    # Dense layer 2
     model = (Dense(256, activation='relu'))(model)
     model = (Dropout(dropout))(model)
-    # Dense layer 3/sigmoid boi
+    model = (Dense(128, activation='relu'))(model)
+    model = (Dropout(dropout))(model)
     model = (Dense(1, activation='sigmoid'))(model)
-    optimizer = optimizers.Adam(lr=learning_rate, decay=0.0)
-    # model.compile(loss='binary_crossentropy',
-    #               optimizer=optimizer,
-    #               metrics=['accuracy'])
-    # model.summary()
     model = Model(model_input, model, name='model_B')
     return model
 
 
 def get_model_C(model_input, learning_rate, dropout):
-    model = (Convolution2D(64, (3, 3), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model_input)
-    model = (MaxPooling2D(pool_size=(3, 3), strides=(2, 2)))(model)
+    model = (Convolution2D(256, (3, 3), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model_input)
+    model = (Convolution2D(256, (3, 3), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
+    model = (Convolution2D(256, (3, 3), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
+    model = (MaxPooling2D(pool_size=(2,2), strides=(2, 2)))(model)
+    model = (Dropout(dropout))(model)
+    model = (Convolution2D(64, (3, 3), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
+    model = (MaxPooling2D(pool_size=(2,2), strides=(2, 2)))(model)
+    model = (Dropout(dropout))(model)
+    model = (Convolution2D(32, (3, 3), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
+    model = (MaxPooling2D(pool_size=(2, 2), strides=(8, 8)))(model)
     model = (Dropout(dropout))(model)
     model = (Flatten())(model)
-    # Dense layer 1
-    model = (Dense(512, activation='relu'))(model)
-    model = (Dropout(dropout))(model)
-    # Dense layer 2
     model = (Dense(256, activation='relu'))(model)
     model = (Dropout(dropout))(model)
-    # Dense layer 3/sigmoid boi
+    model = (Dense(128, activation='relu'))(model)
+    model = (Dropout(dropout))(model)
     model = (Dense(1, activation='sigmoid'))(model)
-    optimizer = optimizers.Adam(lr=learning_rate, decay=0.0)
-    # model.compile(loss='binary_crossentropy',
-    #               optimizer=optimizer,
-    #               metrics=['accuracy'])
-    # model.summary()
-    model = Model(model_input, model, name='model_C')
-    return model
+    model = Model(model_input, model, name='model_B')
 
 
 if __name__ == '__main__':
