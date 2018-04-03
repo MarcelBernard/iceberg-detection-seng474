@@ -79,7 +79,7 @@ if __name__ == '__main__':
     training_losses = []
 
     # Perform 10-fold cross validation
-    kfolds = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
+    kfolds = StratifiedKFold(n_splits=10, shuffle=True)
     kfold_count = 0
     for train_index, test_index in kfolds.split(X, y):
         print('STARTING KFOLD {}'.format(kfold_count))
