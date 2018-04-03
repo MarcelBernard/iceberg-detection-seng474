@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
         model = get_model(learning_rate=0.001, dropout=0.2)
         # Train and test model
-        train_history = model.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32, validation_data=(X_test, y_test))
+        train_history = model.fit(X_train, y_train, epochs=30, verbose=1, batch_size=32, validation_data=(X_test, y_test))
         y_predictions = model.predict(X_test)
 
         # Convert predictions to binary
