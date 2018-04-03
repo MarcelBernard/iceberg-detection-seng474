@@ -125,11 +125,11 @@ if __name__ == '__main__':
     # Perform 10-fold cross validation
     kfolds = StratifiedKFold(n_splits=2, shuffle=True, random_state=7)
     for train_index, test_index in kfolds.split(X, y):
-        X_train = X[train_index][:100]
-        X_test = X[test_index][:50]
+        X_train = X[train_index]
+        X_test = X[test_index]
 
-        y_train = y[train_index][:100]
-        y_test = y[test_index][:50]
+        y_train = y[train_index]
+        y_test = y[test_index]
 
         input_shape = X_train[0, :, :, :].shape
         model_input = Input(shape=input_shape)
