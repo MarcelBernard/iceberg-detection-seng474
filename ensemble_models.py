@@ -106,6 +106,7 @@ def get_model_C(model_input, learning_rate, dropout):
     model = (Dropout(dropout))(model)
     model = (Dense(1, activation='sigmoid'))(model)
     model = Model(model_input, model, name='model_B')
+    return model
 
 
 if __name__ == '__main__':
