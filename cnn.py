@@ -2,6 +2,7 @@ import json
 import os
 import numpy as np
 from data_preprocessing import get_input_data, get_rotated_images
+import csv
 
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.metrics import accuracy_score, precision_score, recall_score
@@ -70,6 +71,11 @@ if __name__ == '__main__':
     precision_scores = []
     recall_scores = []
 
+    validation_accuracies = []
+    validation_losses = []
+    training_accuracies = []
+    training_losses = []
+
     # Perform 10-fold cross validation
     kfolds = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
     kfold_count = 0
@@ -85,7 +91,7 @@ if __name__ == '__main__':
         y_test = y[test_index]
 
         # Train and test model
-        model.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32)
+        train_history = model.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32, validation_data=(X_test, y_test))
         y_predictions = model.predict(X_test)
 
         # Convert predictions to binary
@@ -109,7 +115,66 @@ if __name__ == '__main__':
         print('Recall: {}'.format(recall_scores[-1]))
         print()
 
+        validation_losses.append(train_history.history['val_loss'])
+        validation_accuracies.append(train_history.history['val_acc'])
+        print('Validation accuracy: {}'.format(train_history.history['val_acc']))
+        print('Validation loss: {}'.format(train_history.history['val_loss']))
+
+        training_losses.append(train_history.history['loss'])
+        training_accuracies.append(train_history.history['acc'])
+        print('Training accuracy: {}'.format(train_history.history['acc']))
+        print('Training loss: {}'.format(train_history.history['loss']))
+
+    avg_validation_loss = []
+    for ix in range(15):
+        loss_sum = 0
+        avg_validation_loss.append(0)
+        for losses in validation_losses:
+            loss_sum += losses[ix]
+
+        avg_validation_loss[ix] = loss_sum / len(validation_losses[0])
+
+    avg_validation_accuracy = []
+    for ix in range(15):
+        acc_sum = 0
+        avg_validation_accuracy.append(0)
+        for acc in validation_accuracies:
+            acc_sum += acc[ix]
+
+        avg_validation_accuracy[ix] = acc_sum / len(validation_accuracies[0])
+
+    avg_train_loss = []
+    for ix in range(15):
+        loss_sum = 0
+        avg_train_loss.append(0)
+        for losses in training_losses:
+            loss_sum += losses[ix]
+
+        avg_train_loss[ix] += loss_sum / len(training_losses[0])
+
+    avg_train_accuracy = []
+    for ix in range(15):
+        acc_sum = 0
+        avg_train_accuracy.append(0)
+        for acc in training_accuracies:
+            acc_sum += acc[ix]
+
+        avg_train_accuracy[ix] = acc_sum / len(training_accuracies[0])
+
+    print()
+    print('Average validation accuracy: {}'.format(avg_validation_accuracy))
+    print('Average training accuracy: {}'.format(avg_train_accuracy))
+    print('Average validation loss: {}'.format(avg_validation_loss))
+    print('Average training loss: {}'.format(avg_train_loss))
+    print()
     print('Average accuracy: {}'.format(np.mean(accuracies)))
     print('Average log loss: {}'.format(np.mean(losses)))
     print('Average precision: {}'.format(np.mean(precision_scores)))
     print('Average recall: {}'.format(np.mean(recall_scores)))
+
+    with open('overfitting_results.csv', 'w') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(['validation accuracy'] + avg_validation_accuracy)
+        writer.writerow(['training accuracy'] + avg_train_accuracy)
+        writer.writerow(['validation loss'] + avg_validation_loss)
+        writer.writerow(['training loss'] + avg_train_loss)
