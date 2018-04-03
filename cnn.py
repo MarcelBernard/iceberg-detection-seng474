@@ -136,7 +136,7 @@ if __name__ == '__main__':
         for losses in validation_losses:
             loss_sum += losses[ix]
 
-        avg_validation_loss[ix] = loss_sum / len(validation_losses[0])
+        avg_validation_loss[ix] = loss_sum / 10
 
     avg_validation_accuracy = []
     for ix in range(15):
@@ -145,7 +145,7 @@ if __name__ == '__main__':
         for acc in validation_accuracies:
             acc_sum += acc[ix]
 
-        avg_validation_accuracy[ix] = acc_sum / len(validation_accuracies[0])
+        avg_validation_accuracy[ix] = acc_sum / 10
 
     avg_train_loss = []
     for ix in range(15):
@@ -154,7 +154,7 @@ if __name__ == '__main__':
         for losses in training_losses:
             loss_sum += losses[ix]
 
-        avg_train_loss[ix] += loss_sum / len(training_losses[0])
+        avg_train_loss[ix] += loss_sum / 10
 
     avg_train_accuracy = []
     for ix in range(15):
@@ -163,7 +163,7 @@ if __name__ == '__main__':
         for acc in training_accuracies:
             acc_sum += acc[ix]
 
-        avg_train_accuracy[ix] = acc_sum / len(training_accuracies[0])
+        avg_train_accuracy[ix] = acc_sum / 10
 
     print()
     print('Average validation accuracy: {}'.format(avg_validation_accuracy))
