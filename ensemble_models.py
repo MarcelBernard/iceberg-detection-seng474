@@ -123,7 +123,7 @@ if __name__ == '__main__':
     recall_scores = []
 
     # Perform 10-fold cross validation
-    kfolds = StratifiedKFold(n_splits=2, shuffle=True, random_state=7)
+    kfolds = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
     kfold_count = 0
     for train_index, test_index in kfolds.split(X, y):
         print('STARTING KFOLD {}'.format(kfold_count))
