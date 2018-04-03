@@ -124,7 +124,11 @@ if __name__ == '__main__':
 
     # Perform 10-fold cross validation
     kfolds = StratifiedKFold(n_splits=2, shuffle=True, random_state=7)
+    kfold_count = 0
     for train_index, test_index in kfolds.split(X, y):
+        print('STARTING KFOLD {}'.format(kfold_count))
+        print()
+        kfold_count += 1
         X_train = X[train_index]
         X_test = X[test_index]
 
@@ -180,6 +184,12 @@ if __name__ == '__main__':
         losses.append(loss_avg)
         precision_scores.append(precision_score(y_true=y_test, y_pred=threshold_predictions))
         recall_scores.append(recall_score(y_true=y_test, y_pred=threshold_predictions))
+
+        print('Accuracy: {}'.format(accuracies[-1]))
+        print('Loss: {}'.format(losses[-1]))
+        print('Precision: {}'.format(precision_scores[-1]))
+        print('Recall: {}'.format(recall_scores[-1]))
+        print()
 
     print('Average accuracy: {}'.format(np.mean(accuracies)))
     print('Average log loss: {}'.format(np.mean(losses)))
