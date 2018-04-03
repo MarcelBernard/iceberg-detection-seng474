@@ -3,3 +3,11 @@ Average accuracy: 0.9269367188402453
 Average log loss: 0.1716728599220159
 Average precision: 0.9086502400785494
 Average recall: 0.9412499174935645
+
+Scores with additional data + hyperparameter optimization:
+Average accuracy: 0.9467368881816507
+Average log loss: 0.12978278285284087
+Average precision: 0.9415156805097145
+Average recall: 0.945583155486128
+
+Scores from ensemble classifiers:
