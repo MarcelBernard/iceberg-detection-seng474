@@ -72,7 +72,11 @@ if __name__ == '__main__':
 
     # Perform 10-fold cross validation
     kfolds = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
+    kfold_count = 0
     for train_index, test_index in kfolds.split(X, y):
+        print('STARTING KFOLD {}'.format(kfold_count))
+        kfold_count += 1
+        
         X_train = X[train_index]
         X_test = X[test_index]
 
@@ -80,7 +84,7 @@ if __name__ == '__main__':
         y_test = y[test_index]
 
         # Train and test model
-        model.fit(X_train, y_train, epochs=10, verbose=1)
+        model.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32)
         y_predictions = model.predict(X_test)
 
         # Convert predictions to binary
