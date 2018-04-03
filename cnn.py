@@ -68,8 +68,6 @@ if __name__ == '__main__':
     X = np.concatenate([X, X_rotated])
     y = np.concatenate([y, y_rotated])
 
-    model = get_model(learning_rate=0.001, dropout=0.2)
-
     accuracies = []
     losses = []
     precision_scores = []
@@ -94,6 +92,7 @@ if __name__ == '__main__':
         y_train = y[train_index]
         y_test = y[test_index]
 
+        model = get_model(learning_rate=0.001, dropout=0.2)
         # Train and test model
         train_history = model.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32, validation_data=(X_test, y_test))
         y_predictions = model.predict(X_test)
