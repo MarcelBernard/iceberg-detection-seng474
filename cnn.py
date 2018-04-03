@@ -1,8 +1,12 @@
 import json
 import os
-import numpy as np
 from data_preprocessing import get_input_data, get_rotated_images
 import csv
+import numpy as np
+from numpy.random import seed
+seed(7)
+from tensorflow import set_random_seed
+set_random_seed(420)
 
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.metrics import accuracy_score, precision_score, recall_score
