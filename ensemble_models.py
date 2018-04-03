@@ -154,9 +154,9 @@ if __name__ == '__main__':
                         metrics=['accuracy'])
 
         # Train and test model
-        model_A.fit(X_train, y_train, epochs=1, verbose=1)
-        model_B.fit(X_train, y_train, epochs=1, verbose=1)
-        model_C.fit(X_train, y_train, epochs=1, verbose=1)
+        model_A.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32)
+        model_B.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32)
+        model_C.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32)
 
         y_predictions_A = model_A.predict(X_test)
         y_predictions_B = model_B.predict(X_test)
