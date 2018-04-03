@@ -64,9 +64,9 @@ if __name__ == '__main__':
     X, y = get_input_data(train_file_path='train.json')
 
     # Incorporate rotated images into training data (note that this significantly increases training time)
-    X_rotated, y_rotated = get_rotated_images(X, y)
-    X = np.concatenate([X, X_rotated])
-    y = np.concatenate([y, y_rotated])
+#    X_rotated, y_rotated = get_rotated_images(X, y)
+ #   X = np.concatenate([X, X_rotated])
+  #  y = np.concatenate([y, y_rotated])
 
     accuracies = []
     losses = []
@@ -77,7 +77,8 @@ if __name__ == '__main__':
     validation_losses = []
     training_accuracies = []
     training_losses = []
-
+    
+    epochs = 10
     # Perform 10-fold cross validation
     kfolds = StratifiedKFold(n_splits=10, shuffle=True)
     kfold_count = 0
@@ -94,7 +95,7 @@ if __name__ == '__main__':
 
         model = get_model(learning_rate=0.001, dropout=0.2)
         # Train and test model
-        train_history = model.fit(X_train, y_train, epochs=30, verbose=1, batch_size=32, validation_data=(X_test, y_test))
+        train_history = model.fit(X_train, y_train, epochs=epochs, verbose=1, batch_size=32, validation_data=(X_test, y_test))
         y_predictions = model.predict(X_test)
 
         # Convert predictions to binary
@@ -129,7 +130,7 @@ if __name__ == '__main__':
         print('Training loss: {}'.format(train_history.history['loss']))
 
     avg_validation_loss = []
-    for ix in range(15):
+    for ix in range(epochs):
         loss_sum = 0
         avg_validation_loss.append(0)
         for losses in validation_losses:
@@ -138,7 +139,7 @@ if __name__ == '__main__':
         avg_validation_loss[ix] = loss_sum / 10
 
     avg_validation_accuracy = []
-    for ix in range(15):
+    for ix in range(epochs):
         acc_sum = 0
         avg_validation_accuracy.append(0)
         for acc in validation_accuracies:
@@ -147,7 +148,7 @@ if __name__ == '__main__':
         avg_validation_accuracy[ix] = acc_sum / 10
 
     avg_train_loss = []
-    for ix in range(15):
+    for ix in range(epochs):
         loss_sum = 0
         avg_train_loss.append(0)
         for losses in training_losses:
@@ -156,7 +157,7 @@ if __name__ == '__main__':
         avg_train_loss[ix] += loss_sum / 10
 
     avg_train_accuracy = []
-    for ix in range(15):
+    for ix in range(epochs):
         acc_sum = 0
         avg_train_accuracy.append(0)
         for acc in training_accuracies:
