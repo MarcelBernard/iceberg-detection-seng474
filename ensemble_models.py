@@ -97,7 +97,7 @@ def get_model_B(model_input, learning_rate, dropout):
     # model.compile(loss='binary_crossentropy',
     #               optimizer=optimizer,
     #               metrics=['accuracy'])
-    model = Model(model_input, model, name='model_A')
+    model = Model(model_input, model, name='model_B')
     return model
 
 
@@ -152,8 +152,8 @@ if __name__ == '__main__':
         input_shape = X_train[0, :, :, :].shape
         model_input = Input(shape=input_shape)
 
-        model_A = get_model_A(model_input, learning_rate=0.002, dropout=0.2)
-        model_B = get_model_B(model_input, learning_rate=0.002, dropout=0.2)
+        model_A = get_model_A(model_input, learning_rate=0.001, dropout=0.2)
+        model_B = get_model_B(model_input, learning_rate=0.001, dropout=0.2)
         # model_C = get_model_C(model_input, learning_rate=0.002, dropout=0.2)
 
         optimizer = optimizers.Adam(lr=0.002, decay=0.0)
