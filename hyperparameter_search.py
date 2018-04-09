@@ -27,7 +27,7 @@ lambert = permutations[135:]
 X, y = get_input_data(train_file_path='train.json')
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-for params in YOUR_NAME_HERE:
+for params in permutations[45:]:
     model = get_model(learning_rate=params[0], dropout=params[3])
 
     accuracies = []

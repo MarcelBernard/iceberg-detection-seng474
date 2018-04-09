@@ -77,10 +77,24 @@ if __name__ == '__main__':
     validation_losses = []
     training_accuracies = []
     training_losses = []
-    
+
+    y_pred = [0 for n in y]
+    x = accuracy_score(y_true=y, y_pred=y_pred)
+    print(x)
+
+    import sklearn
+    x = sklearn.metrics.log_loss(y, y_pred, eps=1e-15, normalize=True, sample_weight=None, labels=None)
+    print(x)
+
+    x = sklearn.metrics.precision_score(y, y_pred, pos_label=0)
+    print(x)
+
+    x = sklearn.metrics.recall_score(y, y_pred, pos_label=0)
+    print(x)
+
     epochs = 10
     # Perform 10-fold cross validation
-    kfolds = StratifiedKFold(n_splits=10, shuffle=True)
+    kfolds = StratifiedKFold(n_splits=2, shuffle=True)
     kfold_count = 0
     for train_index, test_index in kfolds.split(X, y):
         print('STARTING KFOLD {}'.format(kfold_count))
@@ -95,7 +109,7 @@ if __name__ == '__main__':
 
         model = get_model(learning_rate=0.001, dropout=0.2)
         # Train and test model
-        train_history = model.fit(X_train, y_train, epochs=epochs, verbose=1, batch_size=32, validation_data=(X_test, y_test))
+        train_history = model.fit(X_train, y_train, epochs=1, verbose=1, batch_size=32, validation_data=(X_test, y_test))
         y_predictions = model.predict(X_test)
 
         # Convert predictions to binary
