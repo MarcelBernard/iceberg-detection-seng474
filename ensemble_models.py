@@ -66,22 +66,22 @@ def get_model_A(model_input, learning_rate, dropout):
 
 
 def get_model_B(model_input, learning_rate, dropout):
-    model = (Convolution2D(64, (5, 5), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model_input)
-    model = (Convolution2D(64, (5, 5), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
-    model = (Convolution2D(64, (5, 5), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
-    model = (MaxPooling2D(pool_size=(2,2), strides=(2, 2)))(model)
+    model = (Convolution2D(32, (3, 3), activation='relu', input_shape=(75, 75, 2)))(model_input)
+    model = (MaxPooling2D(pool_size=(2, 2)))(model)
     model = (Dropout(dropout))(model)
-    model = (Convolution2D(64, (5, 5), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
-    model = (MaxPooling2D(pool_size=(2,2), strides=(2, 2)))(model)
+
+    model = (Convolution2D(64, (3, 3), activation='relu'))(model)
+    model = (MaxPooling2D(pool_size=(2, 2))(model))
     model = (Dropout(dropout))(model)
-    model = (Convolution2D(64, (5, 5), strides=(1, 1), activation='relu', input_shape=(75, 75, 2)))(model)
-    model = (MaxPooling2D(pool_size=(2, 2), strides=(8, 8)))(model)
+    model = (Conv2D(64, (3, 3), activation='relu'))(model)
+    model = (Conv2D(64, (3, 3), activation='relu'))(model)
+    model = (MaxPooling2D(pool_size=(2, 2)))(model)
     model = (Dropout(dropout))(model)
+
     model = (Flatten())(model)
     model = (Dense(256, activation='relu'))(model)
     model = (Dropout(dropout))(model)
-    model = (Dense(128, activation='relu'))(model)
-    model = (Dropout(dropout))(model)
+
     model = (Dense(1, activation='sigmoid'))(model)
     model = Model(model_input, model, name='model_B')
     return model
@@ -123,7 +123,7 @@ if __name__ == '__main__':
     recall_scores = []
 
     # Perform 10-fold cross validation
-    kfolds = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
+    kfolds = StratifiedKFold(n_splits=10, shuffle=True)
     kfold_count = 0
     for train_index, test_index in kfolds.split(X, y):
         print('STARTING KFOLD {}'.format(kfold_count))
@@ -138,11 +138,11 @@ if __name__ == '__main__':
         input_shape = X_train[0, :, :, :].shape
         model_input = Input(shape=input_shape)
 
-        model_A = get_model_A(model_input, learning_rate=0.001, dropout=0.2)
-        model_B = get_model_B(model_input, learning_rate=0.001, dropout=0.2)
-        model_C = get_model_C(model_input, learning_rate=0.001, dropout=0.2)
+        model_A = get_model_A(model_input, learning_rate=0.002, dropout=0.2)
+        model_B = get_model_B(model_input, learning_rate=0.002, dropout=0.2)
+        model_C = get_model_C(model_input, learning_rate=0.002, dropout=0.2)
 
-        optimizer = optimizers.Adam(lr=0.001, decay=0.0)
+        optimizer = optimizers.Adam(lr=0.002, decay=0.0)
         model_A.compile(loss='binary_crossentropy',
                         optimizer=optimizer,
                         metrics=['accuracy'])
@@ -154,9 +154,9 @@ if __name__ == '__main__':
                         metrics=['accuracy'])
 
         # Train and test model
-        model_A.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32)
-        model_B.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32)
-        model_C.fit(X_train, y_train, epochs=15, verbose=1, batch_size=32)
+        model_B.fit(X_train, y_train, epochs=40, verbose=1, batch_size=32)
+        model_C.fit(X_train, y_train, epochs=40, verbose=1, batch_size=32)
+        model_A.fit(X_train, y_train, epochs=40, verbose=1, batch_size=32)
 
         y_predictions_A = model_A.predict(X_test)
         y_predictions_B = model_B.predict(X_test)
