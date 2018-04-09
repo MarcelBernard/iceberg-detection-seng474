@@ -151,12 +151,13 @@ if __name__ == '__main__':
 
         input_shape = X_train[0, :, :, :].shape
         model_input = Input(shape=input_shape)
+        model_input_B = Input(shape=input_shape)
 
         model_A = get_model_A(model_input, learning_rate=0.001, dropout=0.2)
-        model_B = get_model_B(model_input, learning_rate=0.001, dropout=0.2)
+        model_B = get_model_B(model_input_B, learning_rate=0.001, dropout=0.2)
         # model_C = get_model_C(model_input, learning_rate=0.002, dropout=0.2)
 
-        optimizer = optimizers.Adam(lr=0.002, decay=0.0)
+        optimizer = optimizers.Adam(lr=0.001, decay=0.0)
         model_A.compile(loss='binary_crossentropy',
                         optimizer=optimizer,
                         metrics=['accuracy'])
@@ -168,9 +169,9 @@ if __name__ == '__main__':
         #                 metrics=['accuracy'])
 
         # Train and test model
-        model_B.fit(X_train, y_train, epochs=40, verbose=1, batch_size=32)
-        # model_C.fit(X_train, y_train, epochs=40, verbose=1, batch_size=32)
         model_A.fit(X_train, y_train, epochs=40, verbose=1, batch_size=32)
+        # model_C.fit(X_train, y_train, epochs=40, verbose=1, batch_size=32)
+        model_B.fit(X_train, y_train, epochs=40, verbose=1, batch_size=32)
 
         y_predictions_A = model_A.predict(X_test)
         y_predictions_B = model_B.predict(X_test)
