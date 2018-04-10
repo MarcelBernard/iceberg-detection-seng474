@@ -5,7 +5,7 @@ import json
 import numpy as np
 
 
-def get_input_data(train_file_path='train.json'):
+def get_input_data(train_file_path='train.json', train=True):
     """Retrieves training (X) and label (y) matrices. Note that this can take a few seconds to run.
 
     Args:
@@ -23,6 +23,7 @@ def get_input_data(train_file_path='train.json'):
 
     band_1 = [instance['band_1'] for instance in train_data]
     band_2 = [instance['band_2'] for instance in train_data]
+    ids = [instance['id'] for instance in train_data]
 
     band_1 = np.array([np.array(band).astype(np.float32).reshape(75, 75) for band in band_1])
     band_2 = np.array([np.array(band).astype(np.float32).reshape(75, 75) for band in band_2])
@@ -30,10 +31,13 @@ def get_input_data(train_file_path='train.json'):
     # Combine all three channels into an array of 1604 tensors (number of training images) with dimension 75 x 75 x 3
     X_train = np.concatenate([band_1[:, :, :, np.newaxis], band_2[:, :, :, np.newaxis]], axis=-1)
 
-    # True labels of data, either iceberg or not iceberg
-    y_train = np.array([instance['is_iceberg'] for instance in train_data])
+    if train:
+        # True labels of data, either iceberg or not iceberg
+        y_train = np.array([instance['is_iceberg'] for instance in train_data])
 
-    return X_train, y_train
+        return X_train, y_train, ids
+    else:
+        return X_train, ids
 
 
 def get_rotated_images(X, y):
